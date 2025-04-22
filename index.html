@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Pantalla de configuración -->
   <div class="card" id="configCard">
     <h2>Reloj y Anotador para Rummy</h2>
     <form id="configForm">
@@ -32,6 +33,7 @@
     <footer class="centered-footer">Elaborado por Cricoflores y ChatGPT</footer>
   </div>
 
+  <!-- Pantalla de juego -->
   <div class="card hidden" id="gameCard">
     <header class="card-header">
       <h2 id="turnHeader"></h2>
@@ -44,6 +46,7 @@
     </div>
 
     <button id="endTurnBtn" class="btn-blue">Terminar Turno</button>
+    <button id="endRoundBtn" class="btn-orange">Fin de ronda</button>
 
     <div class="round-info">
       Ronda <span id="roundNumber">1</span>/4
@@ -60,10 +63,12 @@
       </table>
     </div>
 
-    <form id="pointsForm">
-      <div id="inputsContainer"></div>
-      <button type="submit" class="btn-green">Guardar puntos de ronda</button>
-    </form>
+    <div id="scoringSection" class="hidden">
+      <form id="pointsForm">
+        <div id="inputsContainer"></div>
+        <button type="submit" class="btn-green">Guardar puntos de ronda</button>
+      </form>
+    </div>
 
     <footer class="centered-footer">Elaborado por Cricoflores y ChatGPT</footer>
   </div>
@@ -71,4 +76,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
