@@ -13,15 +13,16 @@
     <h2>Reloj y Anotador para Rummy</h2>
     <form id="configForm">
       <label for="turnTimeSelect">Tiempo por turno:</label>
-      <select id="turnTimeSelect">
+      <select id="turnTimeSelect" required>
         <option value="30">30 segundos</option>
         <option value="60" selected>60 segundos</option>
         <option value="90">90 segundos</option>
       </select>
 
       <label for="numPlayersSelect">Número de jugadores:</label>
-      <select id="numPlayersSelect">
-        <option value="2" selected>2 jugadores</option>
+      <select id="numPlayersSelect" required>
+        <option value="" disabled selected>Seleccione número de jugadores</option>
+        <option value="2">2 jugadores</option>
         <option value="3">3 jugadores</option>
         <option value="4">4 jugadores</option>
       </select>
