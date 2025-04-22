@@ -67,7 +67,7 @@ ruleBtn.addEventListener('click', () => {
 
 // Formato mm:ss
 function formatTime(s) {
-  const m = Math.floor(s/60), sec = s%60;
+  const m = Math.floor(s/60), sec = s % 60;
   return `${m}:${sec.toString().padStart(2,'0')}`;
 }
 
@@ -119,7 +119,7 @@ function renderTable() {
   }
 }
 
-// Genera inputs de puntos
+// Genera inputs de puntos para la ronda actual
 function renderInputs() {
   inputsContainer.innerHTML = '';
   for (let i = 1; i <= numPlayers; i++) {
@@ -129,7 +129,7 @@ function renderInputs() {
     lbl.textContent = names[i-1];
     const inp = document.createElement('input');
     inp.type = 'number'; inp.min = 0;
-    inp.value = scores[i-1][currentRound-1] || 0;
+    inp.value = scores[i-1][currentRound-1] ?? 0;
     inp.id    = `input-player-${i}`;
     div.append(lbl, inp);
     inputsContainer.appendChild(div);
@@ -154,13 +154,14 @@ endTurnBtn.addEventListener('click', () => {
   initTurn();
 });
 
-// “Guardar puntos de ronda”
+// “Guardar puntos de ronda”: guarda y actualiza tabla
 pointsForm.addEventListener('submit', e => {
   e.preventDefault();
   for (let i = 1; i <= numPlayers; i++) {
     const val = +document.getElementById(`input-player-${i}`).value || 0;
     scores[i-1][currentRound-1] = val;
   }
+  renderTable();
 });
 
 // Inicializa cada turno
