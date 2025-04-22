@@ -18,12 +18,12 @@ const scoresBody        = document.getElementById('scoresBody');
 const inputsContainer   = document.getElementById('inputsContainer');
 const pointsForm        = document.getElementById('pointsForm');
 
-let numPlayers, timerSeconds, currentRound;
+let numPlayers, timerSeconds, currentRound, currentPlayer;
 const maxRounds = 4;
 let scores = [], names = [];
 let remainingSeconds, timerInterval;
 
-// Genera inputs de nombre al cambiar número de jugadores
+// Al cambiar número de jugadores, genero inputs de nombre
 numPlayersSelect.addEventListener('change', () => {
   playerNamesContainer.innerHTML = '';
   for (let i = 1; i <= +numPlayersSelect.value; i++) {
@@ -39,7 +39,7 @@ numPlayersSelect.addEventListener('change', () => {
   }
 });
 
-// Arranca la partida
+// Inicio de la partida
 configForm.addEventListener('submit', e => {
   e.preventDefault();
   timerSeconds = +turnTimeSelect.value;
@@ -49,14 +49,15 @@ configForm.addEventListener('submit', e => {
     const v = document.getElementById(`playerName${i}`).value.trim();
     names.push(v || `Jugador ${i}`);
   }
-  currentRound = 1;
-  scores       = Array.from({length: numPlayers}, () => Array(maxRounds).fill(null));
+  currentRound  = 1;
+  currentPlayer = 1;
+  scores        = Array.from({length: numPlayers}, () => Array(maxRounds).fill(null));
   configCard.classList.add('hidden');
   gameCard.classList.remove('hidden');
   startRound();
 });
 
-// Abre reglamento
+// Abrir reglamento
 ruleBtn.addEventListener('click', () => {
   window.open(
     'https://ruibalgames.com/wp-content/uploads/2015/10/Reglamento-RUMMY-BURAKO-Cl%C3%A1sico-y-Profesional.pdf',
@@ -66,7 +67,7 @@ ruleBtn.addEventListener('click', () => {
 
 // Formatea segundos a mm:ss
 function formatTime(s) {
-  const m = Math.floor(s/60), sec = s%60;
+  const m = Math.floor(s/60), sec = s % 60;
   return `${m}:${sec.toString().padStart(2,'0')}`;
 }
 
@@ -82,7 +83,7 @@ function drawCircle(fraction) {
   ctx.strokeStyle = '#333'; ctx.lineWidth = 15; ctx.stroke();
 }
 
-// Inicia el timer
+// Inicia y actualiza timer
 function startTimer() {
   remainingSeconds = timerSeconds;
   updateTimer();
@@ -100,12 +101,13 @@ function updateTimer() {
   drawCircle(remainingSeconds/timerSeconds);
 }
 
-// Pinta encabezado de ronda
+// Pinta encabezado de ronda y jugador
 function renderHeader() {
-  turnHeader.textContent = `Ronda ${currentRound}/${maxRounds}`;
+  turnHeader.textContent = `Ronda ${currentRound}/${maxRounds} — Turno de ${names[currentPlayer-1]}`;
+  roundNumber.textContent = currentRound;
 }
 
-// Pinta la tabla de puntuaciones
+// Pinta tabla de puntuaciones
 function renderTable() {
   scoresBody.innerHTML = '';
   for (let i = 0; i < numPlayers; i++) {
@@ -117,7 +119,7 @@ function renderTable() {
   }
 }
 
-// Prepara inputs de puntos
+// Genera inputs de puntos para la ronda actual (todos activos)
 function renderInputs() {
   inputsContainer.innerHTML = '';
   for (let i = 1; i <= numPlayers; i++) {
@@ -134,35 +136,46 @@ function renderInputs() {
   }
 }
 
-// Detiene el timer (sin avanzar)
+// “Terminar Turno”: avanza jugador + reinicia reloj
 endTurnBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
+
+  // Avanza al siguiente jugador
+  currentPlayer = currentPlayer < numPlayers ? currentPlayer + 1 : 1;
+
+  // Si vuelvo al primer jugador, cierro ronda y paso a la siguiente
+  if (currentPlayer === 1) {
+    currentRound = currentRound < maxRounds ? currentRound + 1 : currentRound;
+  }
+
+  // Si ya pasé todas las rondas: fin de juego
+  if (currentRound > maxRounds) {
+    const totals = scores.map(arr=>arr.reduce((a,b)=>a+(b||0),0));
+    const winner = names[totals.indexOf(Math.max(...totals))];
+    alert(`Fin de juego. Ganador: ${winner}`);
+    return;
+  }
+
+  // Reinicio la UI para el siguiente turno
+  renderHeader();
+  renderTable();
+  renderInputs();
+  startTimer();
 });
 
-// Guarda puntos y pasa a la próxima ronda
+// “Guardar puntos de ronda”: guarda y actualiza tabla
 pointsForm.addEventListener('submit', e => {
   e.preventDefault();
-  // Guarda en la columna actual
   for (let i = 1; i <= numPlayers; i++) {
     scores[i-1][currentRound-1] = +document.getElementById(`input-player-${i}`).value || 0;
   }
   renderTable();
-  // Siguiente ronda o fin
-  if (currentRound < maxRounds) {
-    currentRound++;
-    startRound();
-  } else {
-    const totals = scores.map(arr=>arr.reduce((a,b)=>a+(b||0),0));
-    const winner = names[totals.indexOf(Math.max(...totals))];
-    alert(`Fin de juego. Ganador: ${winner}`);
-  }
 });
 
-// Inicializa y arranca una ronda
+// Inicializa y arranca la primera ronda
 function startRound() {
   renderHeader();
   renderTable();
   renderInputs();
-  roundNumber.textContent = currentRound;
   startTimer();
 }
