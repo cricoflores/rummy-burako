@@ -14,6 +14,8 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.hidden { display: none; }
+
 .card h2 {
   text-align: center;
   margin-bottom: 20px;
@@ -33,10 +35,6 @@ select, input[type="text"], input[type="number"] {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
-}
-
-#playerNamesContainer label {
-  margin-top: 10px;
 }
 
 .btn-blue, .btn-green {
@@ -60,8 +58,6 @@ select, input[type="text"], input[type="number"] {
   color: #fff;
 }
 
-.hidden { display: none; }
-
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -69,9 +65,11 @@ select, input[type="text"], input[type="number"] {
 }
 
 .btn-rule {
-  background: none;
+  background: #ffc107;
   border: none;
-  color: #007bff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
   cursor: pointer;
 }
 
@@ -117,6 +115,7 @@ tbody tr:nth-child(odd) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .input-group label {
