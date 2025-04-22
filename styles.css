@@ -1,0 +1,23 @@
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  text-align: center;
+}
+.hidden { display: none; }
+#timerCanvas {
+  margin: 20px auto;
+  display: block;
+}
+#scores table {
+  margin: 20px auto;
+  border-collapse: collapse;
+}
+#scores th, #scores td {
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+}
+footer {
+  margin-top: 40px;
+  font-size: 0.8em;
+  color: #666;
+}
