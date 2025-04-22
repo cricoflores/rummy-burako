@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Configuración -->
   <div class="card" id="configCard">
     <h2>Reloj y Anotador para Rummy</h2>
     <form id="configForm">
@@ -26,12 +27,7 @@
       </select>
 
       <div id="playerNamesContainer">
-        <label>Nombre Jugador 1
-          <input type="text" id="playerName1" placeholder="Jugador 1" required>
-        </label>
-        <label>Nombre Jugador 2
-          <input type="text" id="playerName2" placeholder="Jugador 2" required>
-        </label>
+        <!-- Se generan inputs de nombre aquí -->
       </div>
 
       <button type="submit" class="btn-blue">Comenzar Juego</button>
@@ -39,6 +35,7 @@
     <footer>Elaborado por Cricoflores y ChatGPT</footer>
   </div>
 
+  <!-- Juego -->
   <div class="card hidden" id="gameCard">
     <header class="card-header">
       <h2 id="turnHeader">Turno de …</h2>
@@ -68,7 +65,9 @@
     </div>
 
     <form id="pointsForm">
-      <div id="inputsContainer"></div>
+      <div id="inputsContainer">
+        <!-- Se generan inputs de puntuación -->
+      </div>
       <button type="submit" class="btn-green">Guardar puntos de ronda</button>
     </form>
 
