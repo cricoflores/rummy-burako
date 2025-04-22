@@ -1,29 +1,53 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Rummy Burako</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Rummy Burako</h1>
+  <div class="card">
+    <header class="card-header">
+      <h2 id="turnHeader">Turno de Jugador 1</h2>
+      <button id="ruleBtn" class="btn-rule">Reglamento</button>
+    </header>
 
-  <div id="player-selection">
-    <label>Jugadores (2–4):
-      <input id="numPlayers" type="number" min="2" max="4" value="2">
-    </label>
-    <button id="startBtn">Iniciar Juego</button>
+    <div class="timer-container">
+      <canvas id="timerCanvas" width="200" height="200"></canvas>
+      <div id="timerText">1:00</div>
+    </div>
+
+    <button id="endTurnBtn" class="btn-blue">Terminar Turno</button>
+
+    <div class="round-info">
+      Ronda <span id="roundNumber">1</span>/4
+    </div>
+
+    <div id="scores">
+      <table>
+        <thead>
+          <tr>
+            <th>Jugador</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="scoresBody">
+          <!-- filas generadas por JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <form id="pointsForm">
+      <div id="inputsContainer">
+        <!-- inputs generados por JS -->
+      </div>
+      <button type="submit" class="btn-green">Guardar puntos de ronda</button>
+    </form>
+
+    <footer>Elaborado por Cricoflores y ChatGPT</footer>
   </div>
 
-  <div id="game" class="hidden">
-    <canvas id="timerCanvas" width="200" height="200"></canvas>
-    <div id="roundInfo">Ronda: 1</div>
-    <div id="scores"></div>
-    <button id="ruleBtn">Reglamento</button>
-    <button id="editScoresBtn">Editar Puntuaciones</button>
-  </div>
-
-  <footer>Elaborado por Cricoflores y ChatGPT</footer>
   <script src="script.js"></script>
 </body>
 </html>
