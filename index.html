@@ -8,7 +8,16 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="card">
+  <!-- Pantalla de configuración -->
+  <div id="configCard" class="card">
+    <h2>Configuración</h2>
+    <label for="numPlayersInput">Jugadores (2–4):</label>
+    <input id="numPlayersInput" type="number" min="2" max="4" value="2">
+    <button id="startBtn" class="btn-blue">Iniciar Juego</button>
+  </div>
+
+  <!-- Pantalla de juego (oculta hasta iniciar) -->
+  <div id="gameCard" class="card hidden">
     <header class="card-header">
       <h2 id="turnHeader">Turno de Jugador 1</h2>
       <button id="ruleBtn" class="btn-rule">Reglamento</button>
@@ -51,3 +60,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
