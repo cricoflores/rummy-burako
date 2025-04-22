@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Rummy Burako</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Rummy Burako</h1>
+
+  <div id="player-selection">
+    <label>Jugadores (2–4):
+      <input id="numPlayers" type="number" min="2" max="4" value="2">
+    </label>
+    <button id="startBtn">Iniciar Juego</button>
+  </div>
+
+  <div id="game" class="hidden">
+    <canvas id="timerCanvas" width="200" height="200"></canvas>
+    <div id="roundInfo">Ronda: 1</div>
+    <div id="scores"></div>
+    <button id="ruleBtn">Reglamento</button>
+    <button id="editScoresBtn">Editar Puntuaciones</button>
+  </div>
+
+  <footer>Elaborado por Cricoflores y ChatGPT</footer>
+  <script src="script.js"></script>
+</body>
+</html>
