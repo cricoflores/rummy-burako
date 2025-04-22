@@ -9,12 +9,14 @@ const numPlayersSelect  = document.getElementById('numPlayersSelect');
 const playerNamesContainer = document.getElementById('playerNamesContainer');
 const ruleBtn           = document.getElementById('ruleBtn');
 const endTurnBtn        = document.getElementById('endTurnBtn');
+const endRoundBtn       = document.getElementById('endRoundBtn');
 const turnHeader        = document.getElementById('turnHeader');
 const timerCanvas       = document.getElementById('timerCanvas');
 const ctx               = timerCanvas.getContext('2d');
 const timerText         = document.getElementById('timerText');
 const roundNumber       = document.getElementById('roundNumber');
 const scoresBody        = document.getElementById('scoresBody');
+const scoringSection    = document.getElementById('scoringSection');
 const inputsContainer   = document.getElementById('inputsContainer');
 const pointsForm        = document.getElementById('pointsForm');
 
@@ -23,7 +25,7 @@ const maxRounds = 4;
 let scores = [], names = [];
 let remainingSeconds, timerInterval;
 
-// Al cambiar número de jugadores, genero inputs de nombre
+// Generar inputs de nombre al cambiar número de jugadores
 numPlayersSelect.addEventListener('change', () => {
   playerNamesContainer.innerHTML = '';
   for (let i = 1; i <= +numPlayersSelect.value; i++) {
@@ -39,7 +41,7 @@ numPlayersSelect.addEventListener('change', () => {
   }
 });
 
-// Inicio de la partida
+// Comenzar la partida
 configForm.addEventListener('submit', e => {
   e.preventDefault();
   timerSeconds = +turnTimeSelect.value;
@@ -74,7 +76,7 @@ function formatTime(s) {
 // Dibuja el círculo de progreso
 function drawCircle(fraction) {
   const r = timerCanvas.width/2 - 10;
-  ctx.clearRect(0,0,timerCanvas.width,timerCanvas.height);
+  ctx.clearRect(0, 0, timerCanvas.width, timerCanvas.height);
   ctx.beginPath();
   ctx.arc(100,100,r,0,2*Math.PI);
   ctx.strokeStyle = '#e5e5e5'; ctx.lineWidth = 15; ctx.stroke();
@@ -98,16 +100,17 @@ function startTimer() {
 // Actualiza texto y círculo
 function updateTimer() {
   timerText.textContent = formatTime(remainingSeconds);
-  drawCircle(remainingSeconds/timerSeconds);
+  drawCircle(remainingSeconds / timerSeconds);
 }
 
-// Pinta encabezado de ronda y jugador
+// Renderiza encabezado (ronda y jugador)
 function renderHeader() {
-  turnHeader.textContent = `Ronda ${currentRound}/${maxRounds} — Turno de ${names[currentPlayer-1]}`;
+  turnHeader.textContent = 
+    `Ronda ${currentRound}/${maxRounds} — Turno de ${names[currentPlayer-1]}`;
   roundNumber.textContent = currentRound;
 }
 
-// Pinta tabla de puntuaciones
+// Renderiza la tabla de puntuaciones
 function renderTable() {
   scoresBody.innerHTML = '';
   for (let i = 0; i < numPlayers; i++) {
@@ -119,7 +122,7 @@ function renderTable() {
   }
 }
 
-// Genera inputs de puntos para la ronda actual (todos activos)
+// Renderiza inputs de puntuación (por ronda)
 function renderInputs() {
   inputsContainer.innerHTML = '';
   for (let i = 1; i <= numPlayers; i++) {
@@ -136,46 +139,65 @@ function renderInputs() {
   }
 }
 
-// “Terminar Turno”: avanza jugador + reinicia reloj
+// “Terminar Turno”: solo avanza al siguiente jugador y reinicia el reloj
 endTurnBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
 
-  // Avanza al siguiente jugador
-  currentPlayer = currentPlayer < numPlayers ? currentPlayer + 1 : 1;
+  currentPlayer = currentPlayer < numPlayers 
+    ? currentPlayer + 1 
+    : 1;
 
-  // Si vuelvo al primer jugador, cierro ronda y paso a la siguiente
-  if (currentPlayer === 1) {
-    currentRound = currentRound < maxRounds ? currentRound + 1 : currentRound;
-  }
-
-  // Si ya pasé todas las rondas: fin de juego
-  if (currentRound > maxRounds) {
-    const totals = scores.map(arr=>arr.reduce((a,b)=>a+(b||0),0));
-    const winner = names[totals.indexOf(Math.max(...totals))];
-    alert(`Fin de juego. Ganador: ${winner}`);
-    return;
-  }
-
-  // Reinicio la UI para el siguiente turno
+  // Si volvemos al Jugador 1 y no es la primera ronda, seguimos en la misma
+  // ¡la ronda sólo cambia al guardar puntos!
   renderHeader();
   renderTable();
   renderInputs();
   startTimer();
 });
 
-// “Guardar puntos de ronda”: guarda y actualiza tabla
-pointsForm.addEventListener('submit', e => {
-  e.preventDefault();
-  for (let i = 1; i <= numPlayers; i++) {
-    scores[i-1][currentRound-1] = +document.getElementById(`input-player-${i}`).value || 0;
-  }
-  renderTable();
+// “Fin de ronda”: detiene el timer y muestra el formulario de puntos
+endRoundBtn.addEventListener('click', () => {
+  clearInterval(timerInterval);
+  scoringSection.classList.remove('hidden');
+  endTurnBtn.disabled = true;
+  endRoundBtn.disabled = true;
 });
 
-// Inicializa y arranca la primera ronda
+// “Guardar puntos de ronda”: guarda, avanza de ronda y reinicia UI
+pointsForm.addEventListener('submit', e => {
+  e.preventDefault();
+  // vuelca en columna actual
+  for (let i = 1; i <= numPlayers; i++) {
+    scores[i-1][currentRound-1] = 
+      +document.getElementById(`input-player-${i}`).value || 0;
+  }
+  renderTable();
+
+  // ocultar scoring y reactivar botones
+  scoringSection.classList.add('hidden');
+  endTurnBtn.disabled = false;
+  endRoundBtn.disabled = false;
+
+  // fin de juego?
+  if (currentRound === maxRounds) {
+    const totals = scores.map(arr=>arr.reduce((a,b)=>a+(b||0),0));
+    const minPts = Math.min(...totals);
+    const winner = names[totals.indexOf(minPts)];
+    alert(`¡Fin de juego!\nGanador: ${winner}\ncon ${minPts} puntos.`);
+    return;
+  }
+
+  // paso a la siguiente ronda
+  currentRound++;
+  currentPlayer = 1;
+  startRound();
+});
+
+// Inicia cada ronda
 function startRound() {
   renderHeader();
   renderTable();
   renderInputs();
+  roundNumber.textContent = currentRound;
   startTimer();
 }
