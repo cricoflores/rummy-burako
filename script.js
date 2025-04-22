@@ -1,24 +1,24 @@
 // script.js
 
 // Referencias DOM
-const configCard         = document.getElementById('configCard');
-const gameCard           = document.getElementById('gameCard');
-const configForm         = document.getElementById('configForm');
-const turnTimeSelect     = document.getElementById('turnTimeSelect');
-const numPlayersSelect   = document.getElementById('numPlayersSelect');
+const configCard        = document.getElementById('configCard');
+const gameCard          = document.getElementById('gameCard');
+const configForm        = document.getElementById('configForm');
+const turnTimeSelect    = document.getElementById('turnTimeSelect');
+const numPlayersSelect  = document.getElementById('numPlayersSelect');
 const playerNamesContainer = document.getElementById('playerNamesContainer');
-const ruleBtn            = document.getElementById('ruleBtn');
-const endTurnBtn         = document.getElementById('endTurnBtn');
-const turnHeader         = document.getElementById('turnHeader');
-const timerCanvas        = document.getElementById('timerCanvas');
-const ctx                = timerCanvas.getContext('2d');
-const timerText          = document.getElementById('timerText');
-const roundNumber        = document.getElementById('roundNumber');
-const scoresBody         = document.getElementById('scoresBody');
-const inputsContainer    = document.getElementById('inputsContainer');
-const pointsForm         = document.getElementById('pointsForm');
+const ruleBtn           = document.getElementById('ruleBtn');
+const endTurnBtn        = document.getElementById('endTurnBtn');
+const turnHeader        = document.getElementById('turnHeader');
+const timerCanvas       = document.getElementById('timerCanvas');
+const ctx               = timerCanvas.getContext('2d');
+const timerText         = document.getElementById('timerText');
+const roundNumber       = document.getElementById('roundNumber');
+const scoresBody        = document.getElementById('scoresBody');
+const inputsContainer   = document.getElementById('inputsContainer');
+const pointsForm        = document.getElementById('pointsForm');
 
-let numPlayers, timerSeconds, currentPlayer, currentRound;
+let numPlayers, timerSeconds, currentRound;
 const maxRounds = 4;
 let scores = [], names = [];
 let remainingSeconds, timerInterval;
@@ -39,7 +39,7 @@ numPlayersSelect.addEventListener('change', () => {
   }
 });
 
-// Inicio de la partida
+// Arranca la partida
 configForm.addEventListener('submit', e => {
   e.preventDefault();
   timerSeconds = +turnTimeSelect.value;
@@ -49,15 +49,14 @@ configForm.addEventListener('submit', e => {
     const v = document.getElementById(`playerName${i}`).value.trim();
     names.push(v || `Jugador ${i}`);
   }
-  currentPlayer = 1;
-  currentRound  = 1;
-  scores        = Array.from({length: numPlayers}, () => Array(maxRounds).fill(null));
+  currentRound = 1;
+  scores       = Array.from({length: numPlayers}, () => Array(maxRounds).fill(null));
   configCard.classList.add('hidden');
   gameCard.classList.remove('hidden');
-  initTurn();
+  startRound();
 });
 
-// Abrir reglamento
+// Abre reglamento
 ruleBtn.addEventListener('click', () => {
   window.open(
     'https://ruibalgames.com/wp-content/uploads/2015/10/Reglamento-RUMMY-BURAKO-Cl%C3%A1sico-y-Profesional.pdf',
@@ -67,23 +66,23 @@ ruleBtn.addEventListener('click', () => {
 
 // Formatea segundos a mm:ss
 function formatTime(s) {
-  const m = Math.floor(s / 60), sec = s % 60;
-  return `${m}:${sec.toString().padStart(2, '0')}`;
+  const m = Math.floor(s/60), sec = s%60;
+  return `${m}:${sec.toString().padStart(2,'0')}`;
 }
 
 // Dibuja el círculo de progreso
 function drawCircle(fraction) {
-  const r = timerCanvas.width / 2 - 10;
-  ctx.clearRect(0, 0, timerCanvas.width, timerCanvas.height);
+  const r = timerCanvas.width/2 - 10;
+  ctx.clearRect(0,0,timerCanvas.width,timerCanvas.height);
   ctx.beginPath();
-  ctx.arc(100, 100, r, 0, 2 * Math.PI);
+  ctx.arc(100,100,r,0,2*Math.PI);
   ctx.strokeStyle = '#e5e5e5'; ctx.lineWidth = 15; ctx.stroke();
   ctx.beginPath();
-  ctx.arc(100, 100, r, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * fraction);
+  ctx.arc(100,100,r,-Math.PI/2,-Math.PI/2+2*Math.PI*fraction);
   ctx.strokeStyle = '#333'; ctx.lineWidth = 15; ctx.stroke();
 }
 
-// Arranca el timer
+// Inicia el timer
 function startTimer() {
   remainingSeconds = timerSeconds;
   updateTimer();
@@ -92,19 +91,18 @@ function startTimer() {
     remainingSeconds--;
     if (remainingSeconds < 0) remainingSeconds = 0;
     updateTimer();
-  }, 1000);
+  },1000);
 }
 
 // Actualiza texto y círculo
 function updateTimer() {
   timerText.textContent = formatTime(remainingSeconds);
-  drawCircle(remainingSeconds / timerSeconds);
+  drawCircle(remainingSeconds/timerSeconds);
 }
 
-// Renderiza header y ronda
+// Pinta encabezado de ronda
 function renderHeader() {
-  turnHeader.textContent = `Turno de ${names[currentPlayer - 1]}`;
-  roundNumber.textContent = currentRound;
+  turnHeader.textContent = `Ronda ${currentRound}/${maxRounds}`;
 }
 
 // Pinta la tabla de puntuaciones
@@ -112,62 +110,59 @@ function renderTable() {
   scoresBody.innerHTML = '';
   for (let i = 0; i < numPlayers; i++) {
     const row = document.createElement('tr');
-    const total = scores[i].reduce((a, b) => a + (b || 0), 0);
-    const cells = scores[i].map(v => `<td>${v == null ? '–' : v}</td>`).join('');
+    const total = scores[i].reduce((a,b)=>a+(b||0),0);
+    const cells = scores[i].map(v=>`<td>${v==null?'–':v}</td>`).join('');
     row.innerHTML = `<td>${names[i]}</td>${cells}<td>${total}</td>`;
     scoresBody.appendChild(row);
   }
 }
 
-// Genera inputs de puntos para la ronda actual
+// Prepara inputs de puntos
 function renderInputs() {
   inputsContainer.innerHTML = '';
   for (let i = 1; i <= numPlayers; i++) {
     const div = document.createElement('div');
     div.className = 'input-group';
     const lbl = document.createElement('label');
-    lbl.textContent = names[i - 1];
+    lbl.textContent = names[i-1];
     const inp = document.createElement('input');
     inp.type = 'number'; inp.min = 0;
-    inp.value = scores[i - 1][currentRound - 1] ?? 0;
-    inp.id = `input-player-${i}`;
+    inp.value = scores[i-1][currentRound-1] ?? 0;
+    inp.id    = `input-player-${i}`;
     div.append(lbl, inp);
     inputsContainer.appendChild(div);
   }
 }
 
-// “Terminar Turno”: detiene, avanza y reinicia
+// Detiene el timer (sin avanzar)
 endTurnBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
-  if (currentPlayer < numPlayers) {
-    currentPlayer++;
-  } else {
-    currentPlayer = 1;
-    currentRound++;
-  }
-  if (currentRound > maxRounds) {
-    const totals = scores.map(arr => arr.reduce((a, b) => a + (b || 0), 0));
-    const winner = names[totals.indexOf(Math.max(...totals))];
-    alert(`Fin de juego. Ganador: ${winner}`);
-    return;
-  }
-  initTurn();
 });
 
-// “Guardar puntos de ronda”: guarda y actualiza tabla
+// Guarda puntos y pasa a la próxima ronda
 pointsForm.addEventListener('submit', e => {
   e.preventDefault();
+  // Guarda en la columna actual
   for (let i = 1; i <= numPlayers; i++) {
-    const val = +document.getElementById(`input-player-${i}`).value || 0;
-    scores[i - 1][currentRound - 1] = val;
+    scores[i-1][currentRound-1] = +document.getElementById(`input-player-${i}`).value || 0;
   }
   renderTable();
+  // Siguiente ronda o fin
+  if (currentRound < maxRounds) {
+    currentRound++;
+    startRound();
+  } else {
+    const totals = scores.map(arr=>arr.reduce((a,b)=>a+(b||0),0));
+    const winner = names[totals.indexOf(Math.max(...totals))];
+    alert(`Fin de juego. Ganador: ${winner}`);
+  }
 });
 
-// Inicializa cada turno
-function initTurn() {
+// Inicializa y arranca una ronda
+function startRound() {
   renderHeader();
   renderTable();
   renderInputs();
+  roundNumber.textContent = currentRound;
   startTimer();
 }
