@@ -28,7 +28,9 @@ label {
   font-size: 0.9rem;
 }
 
-select, input[type="text"], input[type="number"] {
+select,
+input[type="text"],
+input[type="number"] {
   width: 100%;
   padding: 8px;
   margin-top: 4px;
@@ -37,7 +39,9 @@ select, input[type="text"], input[type="number"] {
   border-radius: 4px;
 }
 
-.btn-blue, .btn-green {
+.btn-blue,
+.btn-green,
+.btn-orange {
   display: block;
   width: 100%;
   padding: 10px;
@@ -46,6 +50,7 @@ select, input[type="text"], input[type="number"] {
   border-radius: 6px;
   font-size: 1rem;
   cursor: pointer;
+  text-align: center;
 }
 
 .btn-blue {
@@ -55,6 +60,11 @@ select, input[type="text"], input[type="number"] {
 
 .btn-green {
   background: #28a745;
+  color: #fff;
+}
+
+.btn-orange {
+  background: #fd7e14;
   color: #fff;
 }
 
@@ -126,11 +136,9 @@ tbody tr:nth-child(odd) {
   width: 60px;
 }
 
-/* Centra los footers */
 .centered-footer {
   text-align: center;
   margin-top: 20px;
   font-size: 0.8rem;
   color: #666;
 }
-
