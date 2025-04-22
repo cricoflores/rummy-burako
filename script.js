@@ -1,34 +1,33 @@
 // script.js
 
-// Referencias
-const configCard      = document.getElementById('configCard');
-const gameCard        = document.getElementById('gameCard');
-const configForm      = document.getElementById('configForm');
-const turnTimeSelect  = document.getElementById('turnTimeSelect');
-const numPlayersSelect= document.getElementById('numPlayersSelect');
+// Referencias DOM
+const configCard        = document.getElementById('configCard');
+const gameCard          = document.getElementById('gameCard');
+const configForm        = document.getElementById('configForm');
+const turnTimeSelect    = document.getElementById('turnTimeSelect');
+const numPlayersSelect  = document.getElementById('numPlayersSelect');
 const playerNamesContainer = document.getElementById('playerNamesContainer');
-const ruleBtn         = document.getElementById('ruleBtn');
-const endTurnBtn      = document.getElementById('endTurnBtn');
-const turnHeader      = document.getElementById('turnHeader');
-const timerCanvas     = document.getElementById('timerCanvas');
-const ctx             = timerCanvas.getContext('2d');
-const timerText       = document.getElementById('timerText');
-const roundNumber     = document.getElementById('roundNumber');
-const scoresBody      = document.getElementById('scoresBody');
-const inputsContainer = document.getElementById('inputsContainer');
-const pointsForm      = document.getElementById('pointsForm');
+const ruleBtn           = document.getElementById('ruleBtn');
+const endTurnBtn        = document.getElementById('endTurnBtn');
+const turnHeader        = document.getElementById('turnHeader');
+const timerCanvas       = document.getElementById('timerCanvas');
+const ctx               = timerCanvas.getContext('2d');
+const timerText         = document.getElementById('timerText');
+const roundNumber       = document.getElementById('roundNumber');
+const scoresBody        = document.getElementById('scoresBody');
+const inputsContainer   = document.getElementById('inputsContainer');
+const pointsForm        = document.getElementById('pointsForm');
 
 let numPlayers, timerSeconds, currentPlayer, currentRound;
 const maxRounds = 4;
 let scores = [];
+let names  = [];
 let remainingSeconds, timerInterval;
-let names = []; // para almacenar nombres de jugadores
 
-// Cuando cambia número de jugadores, ajusto inputs de nombre
+// Al cambiar número de jugadores ajusto inputs de nombres
 numPlayersSelect.addEventListener('change', () => {
-  const n = +numPlayersSelect.value;
   playerNamesContainer.innerHTML = '';
-  for (let i = 1; i <= n; i++) {
+  for (let i = 1; i <= +numPlayersSelect.value; i++) {
     const lbl = document.createElement('label');
     lbl.textContent = `Nombre Jugador ${i}`;
     const inp = document.createElement('input');
@@ -41,17 +40,17 @@ numPlayersSelect.addEventListener('change', () => {
   }
 });
 
-// Formulario de configuración
+// Inicio del juego: oculto configuración y muestro la card de juego
 configForm.addEventListener('submit', e => {
   e.preventDefault();
   timerSeconds = +turnTimeSelect.value;
   numPlayers   = +numPlayersSelect.value;
-  // Leer nombres
   names = [];
   for (let i = 1; i <= numPlayers; i++) {
-    names.push(document.getElementById(`playerName${i}`).value.trim() || `Jugador ${i}`);
+    const v = document.getElementById(`playerName${i}`).value.trim();
+    names.push(v || `Jugador ${i}`);
   }
-  // Inicializar juego
+  // inicializo estado
   currentPlayer = 1;
   currentRound  = 1;
   scores        = Array.from({length: numPlayers}, () => Array(maxRounds).fill(null));
@@ -60,40 +59,33 @@ configForm.addEventListener('submit', e => {
   initTurn();
 });
 
-// Evento reglamento
+// Abrir reglamento
 ruleBtn.addEventListener('click', () => {
-  window.open(
-    'https://ruibalgames.com/wp-content/uploads/2015/10/Reglamento-RUMMY-BURAKO-Cl%C3%A1sico-y-Profesional.pdf',
-    '_blank'
-  );
+  window.open('https://ruibalgames.com/wp-content/uploads/2015/10/Reglamento-RUMMY-BURAKO-Cl%C3%A1sico-y-Profesional.pdf', '_blank');
 });
 
-// Formato mm:ss
+// Formatea segundos a mm:ss
 function formatTime(s) {
-  const m = Math.floor(s / 60);
-  const sec = s % 60;
+  const m = Math.floor(s/60);
+  const sec = s%60;
   return `${m}:${sec.toString().padStart(2,'0')}`;
 }
 
-// Dibujo de círculo
+// Dibuja el círculo del timer
 function drawCircle(fraction) {
   const r = timerCanvas.width/2 - 10;
   ctx.clearRect(0, 0, timerCanvas.width, timerCanvas.height);
-  // fondo
+  // fondo gris
   ctx.beginPath();
-  ctx.arc(100, 100, r, 0, 2 * Math.PI);
-  ctx.strokeStyle = '#e5e5e5';
-  ctx.lineWidth   = 15;
-  ctx.stroke();
-  // avance
+  ctx.arc(100, 100, r, 0, 2*Math.PI);
+  ctx.strokeStyle = '#e5e5e5'; ctx.lineWidth = 15; ctx.stroke();
+  // progreso
   ctx.beginPath();
-  ctx.arc(100, 100, r, -Math.PI/2, -Math.PI/2 + 2 * Math.PI * fraction);
-  ctx.strokeStyle = '#333';
-  ctx.lineWidth   = 15;
-  ctx.stroke();
+  ctx.arc(100, 100, r, -Math.PI/2, -Math.PI/2 + 2*Math.PI*fraction);
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 15; ctx.stroke();
 }
 
-// Arranca el timer
+// Inicia el timer y actualiza cada segundo
 function startTimer() {
   remainingSeconds = timerSeconds;
   updateTimer();
@@ -105,57 +97,68 @@ function startTimer() {
   }, 1000);
 }
 
-// Actualiza texto y círculo
+// Actualiza el texto y el círculo en pantalla
 function updateTimer() {
   timerText.textContent = formatTime(remainingSeconds);
   drawCircle(remainingSeconds / timerSeconds);
 }
 
-// Renderiza header y ronda
+// Rellena el header con jugador y ronda actual
 function renderHeader() {
-  turnHeader.textContent = `Turno de ${names[currentPlayer - 1]}`;
+  turnHeader.textContent = `Turno de ${names[currentPlayer-1]}`;
   roundNumber.textContent = currentRound;
 }
 
-// Renderiza tabla de puntuaciones
+// Pinta la tabla de puntuaciones
 function renderTable() {
   scoresBody.innerHTML = '';
   for (let i = 0; i < numPlayers; i++) {
     const row = document.createElement('tr');
-    const total = scores[i].reduce((a, b) => a + (b || 0), 0);
-    const cells = scores[i].map(v => `<td>${v == null ? '–' : v}</td>`).join('');
+    const total = scores[i].reduce((a,b)=>a+(b||0),0);
+    const cells = scores[i].map(v=>`<td>${v==null?'–':v}</td>`).join('');
     row.innerHTML = `<td>${names[i]}</td>${cells}<td>${total}</td>`;
     scoresBody.appendChild(row);
   }
 }
 
-// Genera inputs de puntos
+// Prepara los inputs de puntos (todos deshabilitados hasta Terminar Turno)
 function renderInputs() {
   inputsContainer.innerHTML = '';
   for (let i = 1; i <= numPlayers; i++) {
     const div = document.createElement('div');
     div.className = 'input-group';
     const lbl = document.createElement('label');
-    lbl.textContent = names[i - 1];
+    lbl.textContent = names[i-1];
     const inp = document.createElement('input');
-    inp.type = 'number'; 
-    inp.min = 0; 
+    inp.type = 'number';
+    inp.min  = 0;
     inp.value = 0;
-    inp.id = `input-player-${i}`;
-    inp.disabled = (i !== currentPlayer);
+    inp.id    = `input-player-${i}`;
+    inp.disabled = true;              // inactivo hasta endTurnBtn
     div.append(lbl, inp);
     inputsContainer.appendChild(div);
   }
 }
 
-// Lógica al finalizar ronda
-function handleEndTurn(e) {
-  e.preventDefault();
+// Maneja solo la detención del timer y habilita inputs
+endTurnBtn.addEventListener('click', e => {
   clearInterval(timerInterval);
-  const pts = +document.getElementById(`input-player-${currentPlayer}`).value || 0;
-  scores[currentPlayer - 1][currentRound - 1] = pts;
+  // habilito sólo el input del jugador activo
+  for (let i = 1; i <= numPlayers; i++) {
+    document.getElementById(`input-player-${i}`).disabled = (i !== currentPlayer);
+  }
+  // desactivo el botón para evitar múltiples clicks
+  endTurnBtn.disabled = true;
+});
 
-  // Avanzar turno o ronda
+// Guarda puntos y avanza jugador/ronda
+pointsForm.addEventListener('submit', e => {
+  e.preventDefault();
+  // tomo puntos del input habilitado
+  const pts = +document.getElementById(`input-player-${currentPlayer}`).value || 0;
+  scores[currentPlayer-1][currentRound-1] = pts;
+
+  // avanzo turno/ronda
   if (currentPlayer < numPlayers) {
     currentPlayer++;
   } else {
@@ -163,28 +166,24 @@ function handleEndTurn(e) {
     currentRound++;
   }
 
-  // Fin de juego?
+  // fin de juego?
   if (currentRound > maxRounds) {
-    const totals = scores.map(arr => arr.reduce((a, b) => a + (b || 0), 0));
-    const winnerIndex = totals.indexOf(Math.max(...totals));
-    alert(`Fin de juego. Ganador: ${names[winnerIndex]}`);
+    const totals = scores.map(arr=>arr.reduce((a,b)=>a+(b||0),0));
+    const winner = names[totals.indexOf(Math.max(...totals))];
+    alert(`Fin de juego. Ganador: ${winner}`);
     return;
   }
 
+  // reconfiguro para el siguiente turno
   initTurn();
-}
+});
 
-// Inicia cada turno
+// Inicializa cada turno: header, tabla, inputs y timer
 function initTurn() {
+  // reactivo botón y destrabo todos inputs
+  endTurnBtn.disabled = false;
   renderHeader();
   renderTable();
   renderInputs();
   startTimer();
 }
-
-// Enlazar el botón "Terminar Turno" a la misma lógica
-pointsForm.addEventListener('submit', handleEndTurn);
-endTurnBtn.addEventListener('click', e => {
-  e.preventDefault();
-  handleEndTurn(e);
-});
