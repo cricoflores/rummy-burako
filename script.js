@@ -8,41 +8,42 @@ const rummyGameCard    = document.getElementById('rummyGameCard');
 const burakoConfigCard = document.getElementById('burakoConfigCard');
 const burakoScoreCard  = document.getElementById('burakoScoreCard');
 
-// --- RUMMY ---
-const configForm        = document.getElementById('configForm');
-const turnTimeSelect    = document.getElementById('turnTimeSelect');
-const numPlayersSelect  = document.getElementById('numPlayersSelect');
+// --- RUMMY Refs ---
+const configForm         = document.getElementById('configForm');
+const turnTimeSelect     = document.getElementById('turnTimeSelect');
+const numPlayersSelect   = document.getElementById('numPlayersSelect');
 const playerNamesContainer = document.getElementById('playerNamesContainer');
+const ruleBtn            = document.getElementById('ruleBtn');
+const turnHeader         = document.getElementById('turnHeader');
+const timerCanvas        = document.getElementById('timerCanvas');
+const ctx                = timerCanvas.getContext('2d');
+const timerText          = document.getElementById('timerText');
+const endTurnBtn         = document.getElementById('endTurnBtn');
+const endRoundBtn        = document.getElementById('endRoundBtn');
+const roundNumber        = document.getElementById('roundNumber');
+const scoresBody         = document.getElementById('scoresBody');
+const scoringSection     = document.getElementById('scoringSection');
+const inputsContainer    = document.getElementById('inputsContainer');
+const pointsForm         = document.getElementById('pointsForm');
 
-const ruleBtn           = document.getElementById('ruleBtn');
-const turnHeader        = document.getElementById('turnHeader');
-const timerCanvas       = document.getElementById('timerCanvas');
-const ctx               = timerCanvas.getContext('2d');
-const timerText         = document.getElementById('timerText');
-const endTurnBtn        = document.getElementById('endTurnBtn');
-const endRoundBtn       = document.getElementById('endRoundBtn');
-const roundNumber       = document.getElementById('roundNumber');
-const scoresBody        = document.getElementById('scoresBody');
-const scoringSection    = document.getElementById('scoringSection');
-const inputsContainer   = document.getElementById('inputsContainer');
-const pointsForm        = document.getElementById('pointsForm');
-
+// Rummy state
 let numPlayers, timerSeconds, currentRound, currentPlayer;
 const maxRounds = 4;
 let scores = [], names = [];
 let remainingSeconds, timerInterval;
 
-// --- BURAKO ---
-const burakoConfigForm    = document.getElementById('burakoConfigForm');
-const burakoModeEls       = document.getElementsByName('burakoMode');
-const burakoNamesCt       = document.getElementById('burakoNamesContainer');
+// --- BURAKO Refs ---
+const burakoConfigForm   = document.getElementById('burakoConfigForm');
+const burakoModeEls      = document.getElementsByName('burakoMode');
+const burakoNamesCt      = document.getElementById('burakoNamesContainer');
+const burakoRuleBtn      = document.getElementById('burakoRuleBtn');
+const burakoTableBody    = document.getElementById('burakoTableBody');
+const burakoTableCt      = document.getElementById('burakoTableContainer');
+const burakoInputsCt     = document.getElementById('burakoInputsContainer');
+const burakoPointsForm   = document.getElementById('burakoPointsForm');
 
-const burakoRuleBtn       = document.getElementById('burakoRuleBtn');
-const burakoTableCt       = document.getElementById('burakoTableContainer');
-const burakoInputsCt      = document.getElementById('burakoInputsContainer');
-const burakoPointsForm    = document.getElementById('burakoPointsForm');
-
-let burakoMode, burakoNames = [], burakoScores = [], burakoRound = 0;
+// Burako state
+let burakoMode, burakoNames = [], burakoScores = [];
 
 // --- Landing Logic ---
 selectRummy.addEventListener('click', () => {
@@ -58,7 +59,7 @@ selectBurako.addEventListener('click', () => {
   rummyGameCard.classList.add('hidden');
 });
 
-// --- RUMMY: Generar inputs de nombre ---
+// --- RUMMY: generar inputs de nombre ---
 numPlayersSelect.addEventListener('change', () => {
   playerNamesContainer.innerHTML = '';
   for (let i = 1; i <= +numPlayersSelect.value; i++) {
@@ -67,16 +68,14 @@ numPlayersSelect.addEventListener('change', () => {
     const lbl = document.createElement('label');
     lbl.textContent = `Jugador ${i}:`;
     const inp = document.createElement('input');
-    inp.type = 'text';
-    inp.id   = `playerName${i}`;
-    inp.placeholder = `Jugador ${i}`;
-    inp.required = true;
+    inp.type = 'text'; inp.id = `playerName${i}`;
+    inp.placeholder = `Jugador ${i}`; inp.required = true;
     div.append(lbl, inp);
     playerNamesContainer.appendChild(div);
   }
 });
 
-// --- RUMMY: Inicio de la partida ---
+// --- RUMMY: iniciar partida ---
 configForm.addEventListener('submit', e => {
   e.preventDefault();
   timerSeconds = +turnTimeSelect.value;
@@ -94,7 +93,7 @@ configForm.addEventListener('submit', e => {
   startRummyRound();
 });
 
-// --- RUMMY: Reglamento ---
+// --- RUMMY: reglamento ---
 ruleBtn.addEventListener('click', () => {
   window.open(
     'https://ruibalgames.com/wp-content/uploads/2015/10/Reglamento-RUMMY-BURAKO-Cl%C3%A1sico-y-Profesional.pdf',
@@ -102,7 +101,7 @@ ruleBtn.addEventListener('click', () => {
   );
 });
 
-// --- RUMMY: Helpers ---
+// --- RUMMY Helpers ---
 function formatTime(s) {
   const m = Math.floor(s/60), sec = s%60;
   return `${m}:${sec.toString().padStart(2,'0')}`;
@@ -119,7 +118,8 @@ function startTimer() {
   remainingSeconds = timerSeconds; updateRummyTimer();
   clearInterval(timerInterval);
   timerInterval = setInterval(() => {
-    remainingSeconds--; if (remainingSeconds<0) remainingSeconds=0;
+    remainingSeconds--;
+    if (remainingSeconds<0) remainingSeconds=0;
     updateRummyTimer();
   },1000);
 }
@@ -128,9 +128,9 @@ function updateRummyTimer() {
   drawCircle(remainingSeconds/timerSeconds);
 }
 
-// --- RUMMY: Render y lógica ---
+// --- RUMMY Render y lógica ---
 function renderRummyHeader() {
-  turnHeader.textContent = 
+  turnHeader.textContent =
     `Ronda ${currentRound}/${maxRounds} — Turno de ${names[currentPlayer-1]}`;
   roundNumber.textContent = currentRound;
 }
@@ -152,7 +152,8 @@ function renderRummyInputs() {
     const lbl = document.createElement('label');
     lbl.textContent = names[i-1];
     const inp = document.createElement('input');
-    inp.type='number'; inp.min=0; inp.value = scores[i-1][currentRound-1]||0;
+    inp.type='number'; inp.min=0;
+    inp.value = scores[i-1][currentRound-1]||0;
     inp.id = `input-player-${i}`;
     div.append(lbl, inp);
     inputsContainer.appendChild(div);
@@ -189,17 +190,23 @@ function startRummyRound(){
   renderRummyHeader(); renderRummyTable(); renderRummyInputs(); startTimer();
 }
 
-// --- BURAKO: Configuración ---
+// --- BURAKO: configurar nombres según modo ---
 burakoModeEls.forEach(el=>{
   el.addEventListener('change',()=>{
     burakoMode = el.value;
     burakoNamesCt.innerHTML = '';
+    // ocultar/mostrar columnas
+    document.getElementById('bP3').classList.add('hidden-col');
+    document.getElementById('bP4').classList.add('hidden-col');
     let count = burakoMode==='2v2'?4:burakoMode==='1v1v1'?3:2;
+    if(count>=3) document.getElementById('bP3').classList.remove('hidden-col');
+    if(count===4) document.getElementById('bP4').classList.remove('hidden-col');
+    // inputs de nombre
     for(let i=1;i<=count;i++){
       const div = document.createElement('div');
       div.className='input-group';
       const lbl = document.createElement('label');
-      lbl.textContent = `Jugador ${i}:`;
+      lbl.textContent=`Jugador ${i}:`;
       const inp = document.createElement('input');
       inp.type='text'; inp.id=`burakoPlayer${i}`; inp.placeholder=`Jugador ${i}`;
       inp.required=true;
@@ -208,39 +215,48 @@ burakoModeEls.forEach(el=>{
     }
   });
 });
-burakoConfigForm.addEventListener('submit',e=>{
+
+// --- BURAKO: iniciar partida ---
+burakoConfigForm.addEventListener('submit', e=>{
   e.preventDefault();
   burakoNames = [];
   burakoScores = [];
-  burakoRound = 0;
   const inputs = burakoNamesCt.querySelectorAll('input');
-  inputs.forEach(inp=>burakoNames.push(inp.value.trim()||inp.placeholder));
-  burakoScores = [];
+  inputs.forEach(inp=> burakoNames.push(inp.value.trim()||inp.placeholder));
   burakoConfigCard.classList.add('hidden');
   burakoScoreCard.classList.remove('hidden');
   renderBurakoTable();
   renderBurakoInputs();
 });
 
-// --- BURAKO: Reglamento ---
+// --- BURAKO: reglamento ---
 burakoRuleBtn.addEventListener('click',()=>{
   alert('Reglamento de Burako: …');
 });
 
-// --- BURAKO: Render y lógica ---
+// --- BURAKO: render tabla ---
 function renderBurakoTable(){
-  let html = '<table><thead><tr><th>Ronda</th>';
-  burakoNames.forEach(name=> html+=`<th>${name}</th>`);
-  html+='<th>Total</th></tr></thead><tbody>';
-  burakoScores.forEach((roundScores,idx)=>{
-    html+=`<tr><td>${idx+1}</td>`;
-    let total=0;
-    roundScores.forEach(s=>{ html+=`<td>${s}</td>`; total+=s; });
-    html+=`<td>${total}</td></tr>`;
+  burakoTableBody.innerHTML = '';
+  burakoScores.forEach((roundScores, idx)=>{
+    const tr = document.createElement('tr');
+    const tdR = document.createElement('td');
+    tdR.textContent = idx+1;
+    tr.appendChild(tdR);
+    let total = 0;
+    roundScores.forEach(s=>{
+      const td = document.createElement('td');
+      td.textContent = s;
+      tr.appendChild(td);
+      total += s;
+    });
+    const tdT = document.createElement('td');
+    tdT.textContent = total;
+    tr.appendChild(tdT);
+    burakoTableBody.appendChild(tr);
   });
-  html+='</tbody></table>';
-  burakoTableCt.innerHTML = html;
 }
+
+// --- BURAKO: render inputs y lógica ---
 function renderBurakoInputs(){
   burakoInputsCt.innerHTML = '';
   burakoNames.forEach((_,i)=>{
@@ -254,14 +270,14 @@ function renderBurakoInputs(){
     burakoInputsCt.appendChild(div);
   });
 }
-burakoPointsForm.addEventListener('submit',e=>{
+burakoPointsForm.addEventListener('submit', e=>{
   e.preventDefault();
   const roundScores = burakoNames.map((_,i)=>
     parseInt(document.getElementById(`roundInput${i}`).value,10)||0
   );
   burakoScores.push(roundScores);
-  burakoRound++;
   renderBurakoTable();
+  // verificar ganador ≥3000
   const totals = burakoNames.map((_,i)=>
     burakoScores.reduce((sum,rs)=>sum+(rs[i]||0),0)
   );
@@ -272,3 +288,5 @@ burakoPointsForm.addEventListener('submit',e=>{
   }
   renderBurakoInputs();
 });
+
+
