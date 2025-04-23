@@ -3,83 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Reloj y Anotador para Rummy</title>
+  <title>Reloj y Anotador</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- 1. Landing Page -->
+  <!-- 1) Pantalla de selección de modo -->
   <div class="card" id="landingCard">
-    <h2>Seleccione el modo de Juego</h2>
+    <h2>Seleccione Modo de Juego</h2>
     <button id="selectRummy" class="btn-blue">RUMMY</button>
-    <button id="selectBurako" class="btn-orange" disabled>BURAKO (Próximamente)</button>
+    <button id="selectBurako" class="btn-orange">BURAKO</button>
   </div>
 
-  <!-- 2. Configuración de Rummy -->
-  <div class="card hidden" id="configCard">
-    <h2>Reloj y Anotador para Rummy</h2>
-    <form id="configForm">
-      <label for="turnTimeSelect">Tiempo por turno:</label>
-      <select id="turnTimeSelect" required>
-        <option value="30">30 segundos</option>
-        <option value="60" selected>60 segundos</option>
-        <option value="90">90 segundos</option>
-      </select>
+  <!-- 2a) Configuración Rummy (oculto hasta elegir) -->
+  <div class="card hidden" id="rummyConfigCard">
+    <!-- … tu form de Rummy aquí … -->
+  </div>
 
-      <label for="numPlayersSelect">Número de jugadores:</label>
-      <select id="numPlayersSelect" required>
-        <option value="" disabled selected>Seleccione número de jugadores</option>
-        <option value="2">2 jugadores</option>
-        <option value="3">3 jugadores</option>
-        <option value="4">4 jugadores</option>
-      </select>
-
-      <div id="playerNamesContainer"></div>
-
-      <button type="submit" class="btn-blue">Comenzar Juego</button>
+  <!-- 2b) Configuración Burako -->
+  <div class="card hidden" id="burakoConfigCard">
+    <h2>Configuración de Burako</h2>
+    <form id="burakoConfigForm">
+      <label>Tipo de partida:</label>
+      <div>
+        <label><input type="radio" name="burakoMode" value="1v1"> 1 vs 1</label>
+        <label><input type="radio" name="burakoMode" value="1v1v1"> 1 vs 1 vs 1</label>
+        <label><input type="radio" name="burakoMode" value="2v2"> 2 vs 2</label>
+      </div>
+      <div id="burakoNamesContainer">
+        <!-- inputs generados según modo -->
+      </div>
+      <button type="submit" class="btn-blue">Comenzar Burako</button>
     </form>
     <footer class="centered-footer">Elaborado por Cricoflores y ChatGPT</footer>
   </div>
 
-  <!-- 3. Juego -->
-  <div class="card hidden" id="gameCard">
+  <!-- 3a) Juego Rummy -->
+  <div class="card hidden" id="rummyGameCard">
+    <!-- … tu UI de Rummy … -->
+  </div>
+
+  <!-- 3b) Scoreboard Burako -->
+  <div class="card hidden" id="burakoScoreCard">
     <header class="card-header">
-      <h2 id="turnHeader"></h2>
-      <button id="ruleBtn" class="btn-rule">Reglamento</button>
+      <h2>Burako</h2>
+      <button id="burakoRuleBtn" class="btn-rule">Reglamento</button>
     </header>
-
-    <div class="timer-container">
-      <canvas id="timerCanvas" width="200" height="200"></canvas>
-      <div id="timerText">0:00</div>
+    <div id="burakoTableContainer">
+      <!-- tabla dinámica de rondas y totales -->
     </div>
-
-    <button id="endTurnBtn" class="btn-blue">Terminar Turno</button>
-    <button id="endRoundBtn" class="btn-orange">Fin de ronda</button>
-
-    <div class="round-info">
-      Ronda <span id="roundNumber">1</span>/4
-    </div>
-
-    <div id="scores">
-      <table>
-        <thead>
-          <tr>
-            <th>Jugador</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Total</th>
-          </tr>
-        </thead>
-        <tbody id="scoresBody"></tbody>
-      </table>
-    </div>
-
-    <div id="scoringSection" class="hidden">
-      <form id="pointsForm">
-        <div id="inputsContainer"></div>
-        <button type="submit" class="btn-green">Guardar puntos de ronda</button>
-      </form>
-    </div>
-
+    <form id="burakoPointsForm">
+      <div id="burakoInputsContainer"></div>
+      <button type="submit" class="btn-green">Agregar Puntos</button>
+    </form>
     <footer class="centered-footer">Elaborado por Cricoflores y ChatGPT</footer>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
+
