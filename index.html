@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- 1) Pantalla de selección de modo -->
+  <!-- 1) Selección de modo -->
   <div class="card" id="landingCard">
     <h2>Seleccione Modo de Juego</h2>
     <button id="selectRummy" class="btn-blue">RUMMY</button>
@@ -102,7 +102,21 @@
       <button id="burakoRuleBtn" class="btn-rule">Reglamento</button>
     </header>
 
-    <div id="burakoTableContainer"></div>
+    <div id="burakoTableContainer">
+      <table>
+        <thead>
+          <tr>
+            <th>Ronda</th>
+            <th id="bP1">P1</th>
+            <th id="bP2">P2</th>
+            <th id="bP3" class="hidden">P3</th>
+            <th id="bP4" class="hidden">P4</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="burakoTableBody"></tbody>
+      </table>
+    </div>
 
     <form id="burakoPointsForm">
       <div id="burakoInputsContainer"></div>
@@ -115,4 +129,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
