@@ -1,30 +1,41 @@
-// script.js (sin cambios en la lógica de generación de nombres, porque ahora el <select> arranca en "Seleccione..." y
-// generará nombres sólo tras elegir 2/3/4)
-
-const configCard        = document.getElementById('configCard');
-const gameCard          = document.getElementById('gameCard');
-const configForm        = document.getElementById('configForm');
-const turnTimeSelect    = document.getElementById('turnTimeSelect');
-const numPlayersSelect  = document.getElementById('numPlayersSelect');
+// Referencias DOM
+const landingCard        = document.getElementById('landingCard');
+const selectRummy        = document.getElementById('selectRummy');
+const selectBurako       = document.getElementById('selectBurako');
+const configCard         = document.getElementById('configCard');
+const gameCard           = document.getElementById('gameCard');
+const configForm         = document.getElementById('configForm');
+const turnTimeSelect     = document.getElementById('turnTimeSelect');
+const numPlayersSelect   = document.getElementById('numPlayersSelect');
 const playerNamesContainer = document.getElementById('playerNamesContainer');
-const ruleBtn           = document.getElementById('ruleBtn');
-const endTurnBtn        = document.getElementById('endTurnBtn');
-const endRoundBtn       = document.getElementById('endRoundBtn');
-const turnHeader        = document.getElementById('turnHeader');
-const timerCanvas       = document.getElementById('timerCanvas');
-const ctx               = timerCanvas.getContext('2d');
-const timerText         = document.getElementById('timerText');
-const roundNumber       = document.getElementById('roundNumber');
-const scoresBody        = document.getElementById('scoresBody');
-const scoringSection    = document.getElementById('scoringSection');
-const inputsContainer   = document.getElementById('inputsContainer');
-const pointsForm        = document.getElementById('pointsForm');
+const ruleBtn            = document.getElementById('ruleBtn');
+const endTurnBtn         = document.getElementById('endTurnBtn');
+const endRoundBtn        = document.getElementById('endRoundBtn');
+const turnHeader         = document.getElementById('turnHeader');
+const timerCanvas        = document.getElementById('timerCanvas');
+const ctx                = timerCanvas.getContext('2d');
+const timerText          = document.getElementById('timerText');
+const roundNumber        = document.getElementById('roundNumber');
+const scoresBody         = document.getElementById('scoresBody');
+const scoringSection     = document.getElementById('scoringSection');
+const inputsContainer    = document.getElementById('inputsContainer');
+const pointsForm         = document.getElementById('pointsForm');
 
 let numPlayers, timerSeconds, currentRound, currentPlayer;
 const maxRounds = 4;
 let scores = [], names = [];
 let remainingSeconds, timerInterval;
 
+// Landing logic
+selectRummy.addEventListener('click', () => {
+  landingCard.classList.add('hidden');
+  configCard.classList.remove('hidden');
+});
+selectBurako.addEventListener('click', () => {
+  alert('Burako está en desarrollo, ¡próximamente disponible!');
+});
+
+// Generar inputs de nombre al cambiar número de jugadores
 numPlayersSelect.addEventListener('change', () => {
   playerNamesContainer.innerHTML = '';
   for (let i = 1; i <= +numPlayersSelect.value; i++) {
@@ -40,6 +51,7 @@ numPlayersSelect.addEventListener('change', () => {
   }
 });
 
+// Inicio de la partida
 configForm.addEventListener('submit', e => {
   e.preventDefault();
   timerSeconds = +turnTimeSelect.value;
@@ -57,6 +69,7 @@ configForm.addEventListener('submit', e => {
   startRound();
 });
 
+// Abrir reglamento
 ruleBtn.addEventListener('click', () => {
   window.open(
     'https://ruibalgames.com/wp-content/uploads/2015/10/Reglamento-RUMMY-BURAKO-Cl%C3%A1sico-y-Profesional.pdf',
@@ -64,20 +77,23 @@ ruleBtn.addEventListener('click', () => {
   );
 });
 
+// Helper para formato mm:ss
 function formatTime(s) {
   const m = Math.floor(s/60), sec = s % 60;
   return `${m}:${sec.toString().padStart(2,'0')}`;
 }
 
+// Dibuja el círculo de progreso
 function drawCircle(fraction) {
   const r = timerCanvas.width/2 - 10;
-  ctx.clearRect(0,0,timerCanvas.width,timerCanvas.height);
+  ctx.clearRect(0, 0, timerCanvas.width, timerCanvas.height);
   ctx.beginPath(); ctx.arc(100,100,r,0,2*Math.PI);
   ctx.strokeStyle = '#e5e5e5'; ctx.lineWidth = 15; ctx.stroke();
   ctx.beginPath(); ctx.arc(100,100,r,-Math.PI/2,-Math.PI/2+2*Math.PI*fraction);
   ctx.strokeStyle = '#333'; ctx.lineWidth = 15; ctx.stroke();
 }
 
+// Inicia y actualiza el timer
 function startTimer() {
   remainingSeconds = timerSeconds;
   updateTimer();
@@ -86,20 +102,23 @@ function startTimer() {
     remainingSeconds--;
     if (remainingSeconds < 0) remainingSeconds = 0;
     updateTimer();
-  },1000);
+  }, 1000);
 }
 
+// Actualiza texto y círculo
 function updateTimer() {
   timerText.textContent = formatTime(remainingSeconds);
-  drawCircle(remainingSeconds/timerSeconds);
+  drawCircle(remainingSeconds / timerSeconds);
 }
 
+// Render header con ronda y jugador
 function renderHeader() {
   turnHeader.textContent =
     `Ronda ${currentRound}/${maxRounds} — Turno de ${names[currentPlayer-1]}`;
   roundNumber.textContent = currentRound;
 }
 
+// Render tabla de puntuaciones
 function renderTable() {
   scoresBody.innerHTML = '';
   for (let i = 0; i < numPlayers; i++) {
@@ -111,6 +130,7 @@ function renderTable() {
   }
 }
 
+// Render inputs de puntuación
 function renderInputs() {
   inputsContainer.innerHTML = '';
   for (let i = 1; i <= numPlayers; i++) {
@@ -127,12 +147,17 @@ function renderInputs() {
   }
 }
 
+// Terminar turno: solo avanza jugador y reinicia reloj
 endTurnBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
-  currentPlayer = currentPlayer < numPlayers ? currentPlayer+1 : 1;
-  renderHeader(); renderTable(); renderInputs(); startTimer();
+  currentPlayer = currentPlayer < numPlayers ? currentPlayer + 1 : 1;
+  renderHeader();
+  renderTable();
+  renderInputs();
+  startTimer();
 });
 
+// Fin de ronda: muestra scoring
 endRoundBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
   scoringSection.classList.remove('hidden');
@@ -140,6 +165,7 @@ endRoundBtn.addEventListener('click', () => {
   endRoundBtn.disabled = true;
 });
 
+// Guardar puntos y pasar de ronda
 pointsForm.addEventListener('submit', e => {
   e.preventDefault();
   for (let i = 1; i <= numPlayers; i++) {
@@ -162,6 +188,7 @@ pointsForm.addEventListener('submit', e => {
   startRound();
 });
 
+// Inicia cada ronda
 function startRound() {
   renderHeader();
   renderTable();
