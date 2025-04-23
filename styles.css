@@ -17,35 +17,22 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-.btn-blue {
-  background: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  width: 100%;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-.btn-green {
-  background: #28a745;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  width: 100%;
-  border-radius: 6px;
-  cursor: pointer;
-}
+.btn-blue,
+.btn-green,
 .btn-orange {
-  background: #fd7e14;
-  color: #fff;
-  border: none;
-  padding: 10px;
+  display: block;
   width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
   border-radius: 6px;
+  font-size: 1rem;
   cursor: pointer;
-  margin-bottom: 10px;
+  text-align: center;
 }
+.btn-blue { background: #007bff; color: #fff; }
+.btn-green { background: #28a745; color: #fff; }
+.btn-orange{ background: #fd7e14; color: #fff; }
 .btn-rule {
   background: #ffc107;
   color: #000;
@@ -54,11 +41,10 @@ body {
   border-radius: 4px;
   cursor: pointer;
 }
-label {
-  display: block;
-  margin: 10px 0 5px;
-}
-input[type="text"], input[type="number"], select {
+label { margin: 10px 0 5px; display: block; }
+input[type="text"],
+input[type="number"],
+select {
   width: 100%;
   padding: 6px;
   margin-bottom: 10px;
@@ -70,11 +56,23 @@ input[type="text"], input[type="number"], select {
   justify-content: space-between;
   margin-bottom: 10px;
 }
-.centered-footer {
+.timer-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 20px auto;
+}
+#timerText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+}
+.round-info {
   text-align: center;
-  font-size: 0.8rem;
-  color: #666;
-  margin-top: 20px;
+  margin: 10px 0;
+  font-weight: bold;
 }
 table {
   width: 100%;
@@ -88,5 +86,11 @@ th, td {
 }
 tbody tr:nth-child(odd) {
   background: #f9f9f9;
+}
+.centered-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: #666;
 }
 
