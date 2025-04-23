@@ -31,7 +31,7 @@ body {
   text-align: center;
 }
 .btn-blue { background: #007bff; color: #fff; }
-.btn-green { background: #28a745; color: #fff; }
+.btn-green{ background: #28a745; color: #fff; }
 .btn-orange{ background: #fd7e14; color: #fff; }
 .btn-rule {
   background: #ffc107;
@@ -93,4 +93,6 @@ tbody tr:nth-child(odd) {
   font-size: 0.8rem;
   color: #666;
 }
+/* Para ocultar columnas P3/P4 si no aplican */
+.hidden-col { display: none; }
 
